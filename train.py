@@ -25,7 +25,6 @@ def train(step, model_name):
 
     # load the CSV file from disk (dataset) if it already exists (without downloading)
     
-
     # load the data
     
     if os.path.isfile(ticker_data_filename):

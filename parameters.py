@@ -6,13 +6,13 @@ Created on Feb 14, 2020
 
 import os
 import time
-from tensorflow.keras.layers import LSTM, GRU
+from tensorflow.keras.layers import LSTM, GRU,RNN
 from keras import backend as K
 import tensorflow as tf
-# Window size or the sequence length
+# TAMAÑO DE LA VENTANA O SECUENCIA
 N_STEPS = 70
-# Lookup step, 1 is the next day
-LOOKUP_STEP = 120
+#  SIGUIENTE DIA
+LOOKUP_STEP = 8
 
 # test ratio size, 0.2 is 20%
 TEST_SIZE = 0.2
@@ -20,6 +20,7 @@ TEST_SIZE = 0.2
 FEATURE_COLUMNS = ["adjclose", "volume", "open", "high", "low"]
 # date now
 date_now = time.strftime("%Y-%m-%d")
+fecha_modelos="2020-02-20"
 
 ### model parameters
 
@@ -37,7 +38,7 @@ DROPOUT = 0.4
 LOSS = "mse"
 OPTIMIZER = "adam"
 BATCH_SIZE = 64
-EPOCHS = 550
+EPOCHS = 12
 
 # Apple stock market
 ticker = "TSLA"

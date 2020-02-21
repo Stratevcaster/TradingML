@@ -2,6 +2,7 @@
 Created on Feb 14, 2020
 
 @author: USER
+ULTIMO FUNCIONAL 
 '''
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
@@ -9,22 +10,63 @@ from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from yahoo_fin import stock_info as si
 from collections import deque
-
+import requests
 import numpy as np
 import pandas as pd
 import random
+import datetime
+
+#Funcion para Tingo a Json a Frame
+# @return frame
+def get_stock_dataJSON(stock_sym, start_date, end_date,index_as_date = True):
+    base_url = 'https://api.tiingo.com/tiingo/daily/'+stock_sym + '/prices?'
+    token = 'da2ac110cdd4a6586434808a9c2a275af4fc5693'
+    payload = {
+        'token' : token,
+        'startDate' : start_date,
+        'endDate' : end_date
+        }
+    response = requests.get(base_url,params=payload)
+    data = response.json()
+    #df = pd.DataFrame.from_records(data).T         
+    df = pd.io.json.json_normalize(data)
+    dates = []   
+    ticker = stock_sym
+    for arr_date in df['date']:
+       
+        final_date = arr_date.split("T")[0]
+        final_date = datetime.datetime.strptime(final_date, "%Y-%m-%d")
+        final_date = datetime.datetime.timestamp(final_date)
+        dates.append(final_date)
+    df["date"] = dates
+    # get open / high / low / close data
+    
+    # get the date info
+    temp_time = df['date']
+    df.index = pd.to_datetime(temp_time, unit = "s")
+    df.index = df.index.map(lambda dt: dt.floor("d"))
+    
+    
+    frame = df[['close', 'volume', 'open', 'high', 'low']]
+        
+    frame['ticker'] = ticker.upper()
+    
+    if not index_as_date:  
+        frame = frame.reset_index()
+        frame.rename(columns = {"index": "date"}, inplace = True)
+        
+    return frame
 
 
-def load_data(ticker, n_steps=50, scale=True, shuffle=True, lookup_step=1, 
+def load_data(ticker, n_steps=70, shuffle=True, lookup_step=1, 
                 test_size=0.2, feature_columns=['adjclose', 'volume', 'open', 'high', 'low']):
     """
-    Loads data from Yahoo Finance source, as well as scaling, shuffling, normalizing and splitting.
-    Params:
-        ticker (str/pd.DataFrame): the ticker you want to load, examples include AAPL, TESL, etc.
-        n_steps (int): the historical sequence length (i.e window size) used to predict, default is 50
-        scale (bool): whether to scale prices from 0 to 1, default is True
-        shuffle (bool): whether to shuffle the data, default is True
-        lookup_step (int): the future lookup step to predict, default is 1 (e.g next day)
+    #
+    
+    tiker es o un string o un Dataframe. 
+    n steps secuencia de datos historicos o tamano de la ventana usada para predecir 
+    shuffle siempre a true
+    lookup_step (int): the future lookup step to predict, default is 1 (e.g next day)
         test_size (float): ratio for test data, default is 0.2 (20% testing data)
         feature_columns (list): the list of features to use to feed into the model, default is everything grabbed from yahoo_fin
     """
@@ -46,17 +88,16 @@ def load_data(ticker, n_steps=50, scale=True, shuffle=True, lookup_step=1,
     # make sure that the passed feature_columns exist in the dataframe
     for col in feature_columns:
         assert col in df.columns
-
-    if scale:
-        column_scaler = {}
-        # scale the data (prices) from 0 to 1
-        for column in feature_columns:
-            scaler = preprocessing.MinMaxScaler()
-            df[column] = scaler.fit_transform(np.expand_dims(df[column].values, axis=1))
-            column_scaler[column] = scaler
-
-        # add the MinMaxScaler instances to the result returned
-        result["column_scaler"] = column_scaler
+        
+    column_scaler = {}
+    # scale the data (prices) from 0 to 1
+    for column in feature_columns:
+        scaler = preprocessing.MinMaxScaler()
+        df[column] = scaler.fit_transform(np.expand_dims(df[column].values, axis=1))
+        column_scaler[column] = scaler
+    
+    # add the MinMaxScaler instances to the result returned
+    result["column_scaler"] = column_scaler
 
     # add the target column (label) by shifting by `lookup_step`
     df['future'] = df['adjclose'].shift(-lookup_step)

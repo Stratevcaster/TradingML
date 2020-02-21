@@ -26,22 +26,22 @@ def test(LOOKUP_STEP):
                 neurons=UNITS
                 )
             
-        # load the data
+        # cargamos datos si ya existen no se cargan
             data = load_data(ticker, N_STEPS, lookup_step=LOOKUP_STEP, test_size=TEST_SIZE,
                          feature_columns=FEATURE_COLUMNS, shuffle=False)
 
-        # construct the model
+        # contruimos el modelo
             model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, n_layers=N_LAYERS,
                     dropout=DROPOUT, optimizer=OPTIMIZER)
 
             model_path = os.path.join("results", model_name) + ".h5"
             model.load_weights(model_path)
     
-            # evaluate the model
+            # evaluar el modelo 
             mse, mae = model.evaluate(data["X_test"], data["y_test"])
             # calculate the mean absolute error (inverse scaling)
             mean_absolute_error = data["column_scaler"]["adjclose"].inverse_transform(mae.reshape(1, -1))[0][0]
-            print("Mean Absolute Error:", mean_absolute_error)
+            print("ERROR ABSOLUTO MEDIO:", mean_absolute_error)
             # predict the future price
             classification=False
             last_sequence = data["last_sequence"][:N_STEPS]
@@ -111,11 +111,11 @@ def test(LOOKUP_STEP):
                 neurons=UNITS
                 )
             
-        # load the data
+        # cargamos los datos
             data = load_data(ticker, N_STEPS, lookup_step=LOOKUP_STEP, test_size=TEST_SIZE,
                          feature_columns=FEATURE_COLUMNS, shuffle=False)
 
-        # construct the model
+        # construimos el modelo
             model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, n_layers=N_LAYERS,
                     dropout=DROPOUT, optimizer=OPTIMIZER)
 
@@ -157,6 +157,7 @@ def test(LOOKUP_STEP):
             X_test = data["X_test"]
               
             y_pred = model.predict(X_test)
+            
             y_test = np.squeeze(data["column_scaler"]["adjclose"].inverse_transform(np.expand_dims(y_test, axis=0)))
             y_pred = np.squeeze(data["column_scaler"]["adjclose"].inverse_transform(y_pred))
             y_pred_new = numpy.append(y_pred, preciosfutuos)
@@ -164,32 +165,14 @@ def test(LOOKUP_STEP):
                 
             plt.plot(y_test[-1600:], c='b')
             plt.plot(y_pred_new[val:], c='r')
-            #plt.plot(y_pred_new[len(preciosfutuos):], c='g')
-            plt.xlabel("Days")
-            plt.ylabel("Price")
-            plt.legend(["Actual Price", "Predicted Price"])
-            #plt.legend(["Actual Price", "Predicted Price","Atun"])
+            plt.xlabel("Dias")
+            plt.ylabel("Precio")
+            plt.legend(["Precio real", "Precio predicho"])
             plt.show()
-               
     return   preciosfutuos 
 
 
-'''
-    def predict(model, data, classification=False):
-        # retrieve the last sequence from data
-        last_sequence = data["last_sequence"][:N_STEPS]
-        # retrieve the column scalers
-        column_scaler = data["column_scaler"]
-        # reshape the last sequence
-        last_sequence = last_sequence.reshape((last_sequence.shape[1], last_sequence.shape[0]))
-        # expand dimension
-        last_sequence = np.expand_dims(last_sequence, axis=0)
-        # get the prediction (scaled from 0 to 1)
-        prediction = model.predict(last_sequence)
-        # get the price (by inverting the scaling)
-        predicted_price = column_scaler["adjclose"].inverse_transform(prediction)[0][0]
-    return predicted_price
-    '''
+
 
 
 
