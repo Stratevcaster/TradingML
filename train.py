@@ -1,6 +1,7 @@
 '''
 Created on Feb 14, 2020
-
+https://www.datacamp.com/community/tutorials/lstm-python-stock-market
+MIRAR
 @author: USER
 '''
 from stock_prediction import create_model, load_data
@@ -13,23 +14,14 @@ from numba import cuda
 
 
 def train(step, model_name):
-    # create these folders if they does not exist
-    if not os.path.isdir("results"):
-        os.mkdir("results")
-    
-    if not os.path.isdir("logs"):
-        os.mkdir("logs")
-    
-    if not os.path.isdir("data"):
-        os.mkdir("data")
-
+  
     # load the CSV file from disk (dataset) if it already exists (without downloading)
     
     # load the data
     
     if os.path.isfile(ticker_data_filename):
         ticker = pd.read_csv(ticker_data_filename)
-    data = load_data('GOLD', N_STEPS, lookup_step=step, test_size=TEST_SIZE, feature_columns=FEATURE_COLUMNS)
+    data = load_data('^GDAXI', N_STEPS, lookup_step=step, test_size=TEST_SIZE, feature_columns=COLUMNAS)
     
     if not os.path.isfile(ticker_data_filename):
     # save the CSV file (dataset)
@@ -38,10 +30,10 @@ def train(step, model_name):
     # construct the model
     #model_name = f"{date_now}_{ticker}-{LOSS}-{CELL.__name__}-seq-{N_STEPS}-step-{LOOKUP_STEP}-layers-{N_LAYERS}-units-{UNITS}"
 
-
-
-    model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, n_layers=N_LAYERS,
-                dropout=DROPOUT, optimizer=OPTIMIZER)
+    if bidirectional == True:
+       
+        model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
+                dropout=DROPOUT,normalizer=OPTIMIZER)
 
     # some tensorflow callbacks
     #model_name = f"{date_now}_{ticker}-{LOSS}-{CELL.__name__}-seq-{N_STEPS}-step-{LOOKUP_STEP}-layers-{N_LAYERS}-units-{UNITS}"

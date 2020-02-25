@@ -1,47 +1,48 @@
 '''
 Created on Feb 14, 2020
 
-@author: USER
+@author: Yani Stratev
 '''
 
 import os
 import time
-from tensorflow.keras.layers import LSTM, GRU,RNN
+from tensorflow.keras.layers import LSTM, GRU,RNN,Bidirectional
 from keras import backend as K
 import tensorflow as tf
 # TAMAÑO DE LA VENTANA O SECUENCIA
 N_STEPS = 70
 #  SIGUIENTE DIA
-LOOKUP_STEP = 8
+LOOKUP_STEP = 3
 
-# test ratio size, 0.2 is 20%
+# Usamos estas columnas 
+COLUMNAS = ["adjclose", "volume", "open", "high", "low"]
+# tamaño de la ventana de testeo
 TEST_SIZE = 0.2
-# features to use
-FEATURE_COLUMNS = ["adjclose", "volume", "open", "high", "low"]
+
 # date now
 date_now = time.strftime("%Y-%m-%d")
-fecha_modelos="2020-02-20"
-
+date_model="2020-02-25"
+bidirectional = True
 ### model parameters
-
-N_LAYERS = 4
+NUM_LAYERS = 3
 # LSTM cell
 CELL = LSTM
 # 256 LSTM neurons
 UNITS = 256
 # 40% dropout
 DROPOUT = 0.4
-
+normalizer = 'adam'
 ### training parameters
 
+# nombre de  lo que quiero sacar
+ticker = "^GDAXI"
+ticker_data_filename = os.path.join("data", f"{ticker}_{date_now}.csv")
 # mean squared error loss
 LOSS = "mse"
-OPTIMIZER = "adam"
+OPTIMIZER = "sgd"
 BATCH_SIZE = 64
-EPOCHS = 12
+EPOCHS = 25
 
-# Apple stock market
-ticker = "TSLA"
-ticker_data_filename = os.path.join("data", f"{ticker}_{date_now}.csv")
+
 
 
