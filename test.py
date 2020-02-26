@@ -31,8 +31,8 @@ def test(LOOKUP_STEP):
                          feature_columns=COLUMNAS, shuffle=False)
 
         # contruimos el modelo
-            model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, n_layers=NUM_LAYERS,
-                    dropout=DROPOUT, normalizer=OPTIMIZER)
+            model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
+                    dropout=DROPOUT, normalizer=normalizer,bidirectional=False)
 
             model_path = os.path.join("results", model_name) + ".h5"
             model.load_weights(model_path)
@@ -57,7 +57,7 @@ def test(LOOKUP_STEP):
             predicted_price = column_scaler["adjclose"].inverse_transform(prediction)[0][0]
             preciosfutuos=np.append(preciosfutuos, [predicted_price])
         elif step < LOOKUP_STEP and step< LOOKUP_STEP-1:
-            model_name = "2020-02-25_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
+            model_name = "2020-02-24_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
                 now=date_now,
                 ticker_name=ticker,
                 error_loss=LOSS,
@@ -73,8 +73,8 @@ def test(LOOKUP_STEP):
                          feature_columns=COLUMNAS, shuffle=False)
 
         # construimos el modelo
-            model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, n_layers=NUM_LAYERS,
-                    dropout=DROPOUT, optimizer=OPTIMIZER)
+            model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
+                    dropout=DROPOUT, normalizer=normalizer,bidirectional=False)
 
             model_path = os.path.join("results", model_name) + ".h5"
             model.load_weights(model_path)
@@ -100,7 +100,7 @@ def test(LOOKUP_STEP):
             
             preciosfutuos=np.append(preciosfutuos,[predicted_price])
         elif step == LOOKUP_STEP-1:
-            model_name = "2020-02-25_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
+            model_name = "2020-02-24_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
                 now=date_now,
                 ticker_name=ticker,
                 error_loss=LOSS,
@@ -116,8 +116,8 @@ def test(LOOKUP_STEP):
                          feature_columns=COLUMNAS, shuffle=False)
 
         # Construimos el modelo 
-            model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, n_layers=NUM_LAYERS,
-                    dropout=DROPOUT, optimizer=OPTIMIZER)
+            model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
+                    dropout=DROPOUT, normalizer=normalizer,bidirectional=False)
 
             model_path = os.path.join("results", model_name) + ".h5"
             model.load_weights(model_path)

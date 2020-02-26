@@ -12,7 +12,7 @@ import tensorflow as tf
 # TAMAÑO DE LA VENTANA O SECUENCIA
 N_STEPS = 70
 #  SIGUIENTE DIA
-LOOKUP_STEP = 3
+LOOKUP_STEP = 119
 
 # Usamos estas columnas 
 COLUMNAS = ["adjclose", "volume", "open", "high", "low"]
@@ -41,7 +41,7 @@ ticker_data_filename = os.path.join("data", f"{ticker}_{date_now}.csv")
 LOSS = "mse"
 OPTIMIZER = "sgd"
 BATCH_SIZE = 64
-EPOCHS = 25
+EPOCHS = 450
 
 
 

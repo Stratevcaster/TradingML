@@ -15,7 +15,6 @@ for step in range(1,LOOKUP_STEP):
     if not os.path.isdir("logs"):
         os.mkdir("logs")
     
-    
     if not os.path.isdir("results"):
         os.mkdir("results")
     
@@ -32,7 +31,6 @@ for step in range(1,LOOKUP_STEP):
         layers=NUM_LAYERS,
         neurons=UNITS
     )
-    model_name += "b"
     gc.collect()
     train(step, model_name)
     gc.collect()

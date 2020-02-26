@@ -25,7 +25,7 @@ def train(step, model_name):
     
     if not os.path.isfile(ticker_data_filename):
     # save the CSV file (dataset)
-        data["df"].to_csv(ticker_data_filename)
+        data["dataframe"].to_csv(ticker_data_filename)
 
     # construct the model
     #model_name = f"{date_now}_{ticker}-{LOSS}-{CELL.__name__}-seq-{N_STEPS}-step-{LOOKUP_STEP}-layers-{N_LAYERS}-units-{UNITS}"
