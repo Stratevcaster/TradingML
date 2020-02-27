@@ -5,11 +5,13 @@ Created on Feb 14, 2020
 '''
 from train import train
 import gc
-from parameters import  date_now,LOSS,CELL,N_STEPS,NUM_LAYERS,UNITS,ticker, LOOKUP_STEP,COLUMNAS
+from parameters import  date_now,LOSS,CELL,N_STEPS,NUM_LAYERS,UNITS,ticker, N_DAYS_STEP,COLUMNAS,\
+    bidirectional
 import tensorflow as tf
 import os
 
-for step in range(1,LOOKUP_STEP):
+
+for step in range(1,N_DAYS_STEP):
       # Creamos las carpetas por si no existen 
     
     if not os.path.isdir("logs"):
@@ -31,6 +33,8 @@ for step in range(1,LOOKUP_STEP):
         layers=NUM_LAYERS,
         neurons=UNITS
     )
+    if bidirectional == True:
+        model_name += 'bidirectional'
     gc.collect()
     train(step, model_name)
     gc.collect()

@@ -10,13 +10,14 @@ from sklearn.metrics import accuracy_score
 import numpy
 import requests
 
-def test(LOOKUP_STEP):
+def test(N_DAYS_STEP):
     preciosfutuos = np.array([])
-    for step in range(1,LOOKUP_STEP):
+    for step in range(1,N_DAYS_STEP):
         if step == 0:
         
             model_name = "{date_model}_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
                 now=date_now,
+                date_model = date_model,
                 ticker_name=ticker,
                 error_loss=LOSS,
                 cell_name=CELL.__name__,
@@ -25,9 +26,10 @@ def test(LOOKUP_STEP):
                 layers=NUM_LAYERS,
                 neurons=UNITS
                 )
-            
+            if bidirectional == True:
+                model_name += 'bidirectional'
         # cargamos datos si ya existen no se cargan
-            data = load_data(ticker, N_STEPS, lookup_step=LOOKUP_STEP, test_size=TEST_SIZE,
+            data = load_data(ticker, N_STEPS, n_days=N_DAYS_STEP, test_size=TEST_SIZE,
                          feature_columns=COLUMNAS, shuffle=False)
 
         # contruimos el modelo
@@ -56,9 +58,10 @@ def test(LOOKUP_STEP):
             # get the price (by inverting the scaling)
             predicted_price = column_scaler["adjclose"].inverse_transform(prediction)[0][0]
             preciosfutuos=np.append(preciosfutuos, [predicted_price])
-        elif step < LOOKUP_STEP and step< LOOKUP_STEP-1:
-            model_name = "2020-02-24_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
+        elif step < N_DAYS_STEP and step< N_DAYS_STEP-1:
+            model_name = "{date_model}_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
                 now=date_now,
+                date_model = date_model,
                 ticker_name=ticker,
                 error_loss=LOSS,
                 cell_name=CELL.__name__,
@@ -67,14 +70,15 @@ def test(LOOKUP_STEP):
                 layers=NUM_LAYERS,
                 neurons=UNITS
                 )
-            
+            if bidirectional == True:
+                model_name += 'bidirectional'
         # cargamos los datos
-            data = load_data(ticker, N_STEPS, lookup_step=LOOKUP_STEP, test_size=TEST_SIZE,
+            data = load_data(ticker, N_STEPS, n_days=N_DAYS_STEP, test_size=TEST_SIZE,
                          feature_columns=COLUMNAS, shuffle=False)
 
         # construimos el modelo
             model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
-                    dropout=DROPOUT, normalizer=normalizer,bidirectional=False)
+                    dropout=DROPOUT, normalizer=normalizer,bidirectional=bidirectional)
 
             model_path = os.path.join("results", model_name) + ".h5"
             model.load_weights(model_path)
@@ -99,10 +103,11 @@ def test(LOOKUP_STEP):
             predicted_price = column_scaler["adjclose"].inverse_transform(prediction)[0][0]
             
             preciosfutuos=np.append(preciosfutuos,[predicted_price])
-        elif step == LOOKUP_STEP-1:
-            model_name = "2020-02-24_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
+        elif step == N_DAYS_STEP-1:
+            model_name = "{date_model}_{ticker_name}-{error_loss}-{cell_name}-seq-{sequence_lenght}-step-{step}-layers-{layers}-units-{neurons}".format(
                 now=date_now,
                 ticker_name=ticker,
+                date_model = date_model,
                 error_loss=LOSS,
                 cell_name=CELL.__name__,
                 sequence_lenght=N_STEPS,
@@ -110,14 +115,15 @@ def test(LOOKUP_STEP):
                 layers=NUM_LAYERS,
                 neurons=UNITS
                 )
-            
+            if bidirectional == True:
+                model_name += 'bidirectional'
         # cargamos los datos 
-            data = load_data(ticker, N_STEPS, lookup_step=LOOKUP_STEP, test_size=TEST_SIZE,
+            data = load_data(ticker, N_STEPS, n_days=N_DAYS_STEP, test_size=TEST_SIZE,
                          feature_columns=COLUMNAS, shuffle=False)
 
         # Construimos el modelo 
             model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
-                    dropout=DROPOUT, normalizer=normalizer,bidirectional=False)
+                    dropout=DROPOUT, normalizer=normalizer,bidirectional=bidirectional)
 
             model_path = os.path.join("results", model_name) + ".h5"
             model.load_weights(model_path)
@@ -147,8 +153,8 @@ def test(LOOKUP_STEP):
             y_pred = model.predict(X_test)
             y_test = np.squeeze(data["column_scaler"]["adjclose"].inverse_transform(np.expand_dims(y_test, axis=0)))
             y_pred = np.squeeze(data["column_scaler"]["adjclose"].inverse_transform(y_pred))
-            y_test = list(map(lambda current, future: int(float(future) > float(current)), y_test[:-LOOKUP_STEP], y_test[LOOKUP_STEP:]))
-            y_pred = list(map(lambda current, future: int(float(future) > float(current)), y_pred[:-LOOKUP_STEP], y_pred[LOOKUP_STEP:]))
+            y_test = list(map(lambda current, future: int(float(future) > float(current)), y_test[:-N_DAYS_STEP], y_test[N_DAYS_STEP:]))
+            y_pred = list(map(lambda current, future: int(float(future) > float(current)), y_pred[:-N_DAYS_STEP], y_pred[N_DAYS_STEP:]))
             
             accuracy_score(y_test, y_pred)
             

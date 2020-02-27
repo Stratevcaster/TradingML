@@ -12,7 +12,7 @@ import tensorflow as tf
 # TAMAÑO DE LA VENTANA O SECUENCIA
 N_STEPS = 70
 #  SIGUIENTE DIA
-LOOKUP_STEP = 119
+N_DAYS_STEP= 100
 
 # Usamos estas columnas 
 COLUMNAS = ["adjclose", "volume", "open", "high", "low"]
@@ -21,8 +21,8 @@ TEST_SIZE = 0.2
 
 # date now
 date_now = time.strftime("%Y-%m-%d")
-date_model="2020-02-25"
-bidirectional = True
+date_model="2020-02-27"
+bidirectional = False
 ### model parameters
 NUM_LAYERS = 3
 # LSTM cell

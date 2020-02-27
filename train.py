@@ -14,26 +14,19 @@ from numba import cuda
 
 
 def train(step, model_name):
-  
-    # load the CSV file from disk (dataset) if it already exists (without downloading)
-    
-    # load the data
-    
+
     if os.path.isfile(ticker_data_filename):
         ticker = pd.read_csv(ticker_data_filename)
-    data = load_data('^GDAXI', N_STEPS, lookup_step=step, test_size=TEST_SIZE, feature_columns=COLUMNAS)
+    data = load_data('^GDAXI', N_STEPS, n_days=step, test_size=TEST_SIZE, feature_columns=COLUMNAS)
     
     if not os.path.isfile(ticker_data_filename):
     # save the CSV file (dataset)
         data["dataframe"].to_csv(ticker_data_filename)
 
-    # construct the model
     #model_name = f"{date_now}_{ticker}-{LOSS}-{CELL.__name__}-seq-{N_STEPS}-step-{LOOKUP_STEP}-layers-{N_LAYERS}-units-{UNITS}"
-
-    if bidirectional == True:
-       
-        model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
-                dropout=DROPOUT,normalizer=OPTIMIZER)
+ 
+    model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
+                dropout=DROPOUT,normalizer=OPTIMIZER,bidirectional=bidirectional)
 
     # some tensorflow callbacks
     #model_name = f"{date_now}_{ticker}-{LOSS}-{CELL.__name__}-seq-{N_STEPS}-step-{LOOKUP_STEP}-layers-{N_LAYERS}-units-{UNITS}"

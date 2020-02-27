@@ -61,7 +61,7 @@ def get_stock_dataJSON(stock_sym, start_date, end_date,index_as_date = True):
     return frame
 
 
-def load_data(ticker, n_steps=70, shuffle=True, lookup_step=1, 
+def load_data(ticker, n_steps=70, shuffle=True, n_days=10, 
                 test_size=0.3, feature_columns=['adjclose', 'volume', 'open', 'high', 'low']):
   
     # Comprobar si se trata de un strig o se le pasa un DataFrame
@@ -94,11 +94,11 @@ def load_data(ticker, n_steps=70, shuffle=True, lookup_step=1,
     result["column_scaler"] = column_scaler
 
     # add the target column (label) by shifting by `lookup_step`
-    dataframe['future'] = dataframe['adjclose'].shift(-lookup_step)
+    dataframe['future'] = dataframe['adjclose'].shift(-n_days)
 
     # last `lookup_step` columns contains NaN in future column
     # get them before droping NaNs
-    last_sequence = np.array(dataframe[feature_columns].tail(lookup_step))
+    last_sequence = np.array(dataframe[feature_columns].tail(n_days))
     
     # drop NaNs
     dataframe.dropna(inplace=True)
@@ -146,7 +146,7 @@ def create_model(input_length, units, cell, num_layers, dropout,
         for i in range(num_layers):
             if i == 0:
                 # first layer
-                model.add(Bidirectional(cell(units, return_sequences=True, input_shape=(None, input_length))))
+                model.add(Bidirectional(cell(units, return_sequences=True), input_shape=(None, input_length)))
                
             elif i == num_layers - 1:
                 # last layer
