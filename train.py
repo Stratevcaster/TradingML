@@ -11,14 +11,14 @@ import os
 import pandas as pd
 from parameters import *
 from numba import cuda
-
+from stockstats import StockDataFrame
 
 def train(step, model_name):
 
     if os.path.isfile(ticker_data_filename):
         ticker = pd.read_csv(ticker_data_filename)
-    data = load_data('^GDAXI', N_STEPS, n_days=step, test_size=TEST_SIZE, feature_columns=COLUMNAS)
-    
+    data = load_data('^GDAXI', N_STEPS, n_days=step, test_size=TEST_SIZE, feature_columns=COLUMN_NAME)
+   
     if not os.path.isfile(ticker_data_filename):
     # save the CSV file (dataset)
         data["dataframe"].to_csv(ticker_data_filename)

@@ -30,7 +30,7 @@ def test(N_DAYS_STEP):
                 model_name += 'bidirectional'
         # cargamos datos si ya existen no se cargan
             data = load_data(ticker, N_STEPS, n_days=N_DAYS_STEP, test_size=TEST_SIZE,
-                         feature_columns=COLUMNAS, shuffle=False)
+                         feature_columns=COLUMN_NAME, shuffle=False)
 
         # contruimos el modelo
             model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
@@ -74,7 +74,7 @@ def test(N_DAYS_STEP):
                 model_name += 'bidirectional'
         # cargamos los datos
             data = load_data(ticker, N_STEPS, n_days=N_DAYS_STEP, test_size=TEST_SIZE,
-                         feature_columns=COLUMNAS, shuffle=False)
+                         feature_columns=COLUMN_NAME, shuffle=False)
 
         # construimos el modelo
             model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,
@@ -119,7 +119,7 @@ def test(N_DAYS_STEP):
                 model_name += 'bidirectional'
         # cargamos los datos 
             data = load_data(ticker, N_STEPS, n_days=N_DAYS_STEP, test_size=TEST_SIZE,
-                         feature_columns=COLUMNAS, shuffle=False)
+                         feature_columns=COLUMN_NAME, shuffle=False)
 
         # Construimos el modelo 
             model = create_model(N_STEPS, loss=LOSS, units=UNITS, cell=CELL, num_layers=NUM_LAYERS,

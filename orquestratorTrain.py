@@ -5,8 +5,7 @@ Created on Feb 14, 2020
 '''
 from train import train
 import gc
-from parameters import  date_now,LOSS,CELL,N_STEPS,NUM_LAYERS,UNITS,ticker, N_DAYS_STEP,COLUMNAS,\
-    bidirectional
+from parameters import  date_now,LOSS,CELL,N_STEPS,NUM_LAYERS,UNITS,ticker, N_DAYS_STEP,COLUMN_NAME,bidirectional
 import tensorflow as tf
 import os
 

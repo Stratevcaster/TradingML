@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 from yahoo_fin import stock_info as si
 from collections import deque
 import requests
+from stockstats import StockDataFrame
 import numpy as np
 import pandas as pd
 import random
@@ -21,6 +22,7 @@ from pandas.tests.frame.test_validate import dataframe
 
 #Funcion para Tingo a Json a Frame
 # @return frame
+
 def get_stock_dataJSON(stock_sym, start_date, end_date,index_as_date = True):
     base_url = 'https://api.tiingo.com/tiingo/daily/'+stock_sym + '/prices?'
     token = 'da2ac110cdd4a6586434808a9c2a275af4fc5693'
@@ -73,7 +75,10 @@ def load_data(ticker, n_steps=70, shuffle=True, n_days=10,
         dataframe = ticker
     else:
         raise TypeError("ticker can be either a str or a `pd.DataFrame` instances")
-
+    dataframe = StockDataFrame.retype(dataframe)
+    dataframe['macd'] = dataframe.get('macd') # calculate MACD
+    dataframe['atr'] = dataframe.get('atr') # calculate ATR
+    dataframe['dma'] = dataframe.get('dma') # calculate DMA
     # this will contain all the elements we want to return from this function
     result = {}
     # we will also return the original dataframe itself
@@ -171,7 +176,7 @@ def create_model(input_length, units, cell, num_layers, dropout,
                 # add dropout after each laye
             model.add(Dropout(dropout))
     
-    model.add(Dense(1, activation="linear"))
+    model.add(Dense(1, activation="relu"))
     model.compile(loss=loss, metrics=["mean_absolute_error"], optimizer=normalizer)
 
     return model
